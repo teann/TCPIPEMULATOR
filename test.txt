@@ -1,0 +1,362 @@
+Test outputs for PA2 By Tianen Chen
+CSEE 4119 
+04/22/2017
+
+----------------------
+gbnnode.py
+----------------------
+First, I text my program with the following text that is 1001 characters long. 
+
+The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack. Quick wafting zephyrs vex bold Jim. Quick zephyrs blow, vexing daft Jim. Sex-charged fop blew my junk TV quiz. How quickly daft jumping zebras vex. Two driven jocks help fax my big quiz. Quick, Baz, get my woven flax jodhpurs! "Now fax quiz Jack!" my brave ghost pled. Five quacking zephyrs jolt my wax bed. Flummoxed by job, kvetching W. zaps Iraq. Cozy sphinx waves quart jug of bad milk. A very bad quack might jinx zippy fowls. Few quips galvanized the mock jury box. Quick brown dogs jump over the lazy fox. The jay, pig, fox, zebra, and my wolves quack! Blowzy red vixens fight for a quick jump. Joaquin Phoenix was gazed by MTV for luck. A wizard’s job is to vex chumps quickly in fog. Watch "Je 
+
+Both the acknowledgements and packets are dropped with a 10% probability of failure and window size of 5.
+
+The last 10 messages receiver side are printed below. 
+
+[1492899917.48] packet1001 e received
+[1492899917.48] ack999 sent, expecting packet 1000
+[1492899917.98] packet1000 J discarded.
+[1492899917.98] packet1001 e received
+[1492899917.98] ack999 sent, expecting packet 1000
+[1492899918.48] packet1000 J received
+[1492899918.48] ack1000 sent, expecting packet 1001
+[1492899918.48] packet1001 e received
+[1492899918.48] ack1001 sent, expecting packet 1002
+[1492899918.48] [Summary] 186/1893 dropped, loss rate = 9.82567353407%
+
+The last 10 messages sender side are printed below. 
+
+[1492899917.98] packet 1000 timeout
+[1492899917.98] packet 1000 J sent
+[1492899917.98] packet 1001 e sent
+[1492899917.98] ack999 received, window moves to 1000
+[1492899918.48] packet 1000 timeout
+[1492899918.48] packet 1000 J sent
+[1492899918.48] packet 1001 e sent
+[1492899918.48] ack1000 received, window moves to 1001
+[1492899918.48] ack1001 received, window moves to 1002
+[1492899918.48] [Summary] 170/1708 discarded, loss rate = 9.95316159251%
+
+
+As you can see, the timeout packets correspond to the discarded packets (packet 1000 with it being discarded earlier as well) and the loss rate converges to 10%. 
+
+Next, we move onto deterministic dropping. We drop with a window of 3, dropping every 5 packets. We are expecting a drop rate of about 20% (1/5 packets dropped every time).
+
+On the receiver side, we have the last 10 status messages.
+
+[1492900708.71] packet1000 J discarded.
+[1492900708.71] packet1001 e received
+[1492900708.71] ack999 sent, expecting packet 1000
+[1492900709.21] packet1000 J received
+[1492900709.21] ack1000 sent, expecting packet 1001
+[1492900709.21] packet1001 e received
+[1492900709.21] ack1001 sent, expecting packet 1002
+[1492900709.21] packet1001 e received
+[1492900709.21] ack1001 sent, expecting packet 1002
+[1492900709.21] [Summary] 373/1869 dropped, loss rate = 19.9571963617%
+
+On the sender side, we have the last 10 status messages.
+
+[1492900708.71] packet 1001 e sent
+[1492900708.71] ack999 received, window moves to 1000
+[1492900709.21] packet 1000 timeout
+[1492900709.21] packet 1000 J sent
+[1492900709.21] packet 1001 e sent
+[1492900709.21] ack1000 received, window moves to 1001
+[1492900709.21] ack1001 discarded
+[1492900709.21] packet 1001 e sent
+[1492900709.21] ack1001 received, window moves to 1002
+[1492900709.21] [Summary] 299/1497 discarded, loss rate = 19.9732798931%
+
+The loss rate converges nicely to about 10% for both acks and packets.
+Obviously, the scenarios here don't cover the many edge cases where my program can possibly fail. However, I believe that these 2 scenarios show an overall functional GBN. 
+
+----------------------
+dvnode.py
+----------------------
+
+Below is the test output for the scenario given in the assignment handout using the exact input format as the handout did.
+
+For node 1111:
+[1492914091.39] Message received at Node 1111 from Node 2222
+[1492914091.39] Node 1111 Routing Table
+ - (0.8) -> Node 4444; Next Hop -> Node 2222
+ - (0.3) -> Node 3333; Next Hop -> Node 2222
+ - (0.1) -> Node 2222
+[1492914091.39] Message sent from Node 1111 to Node 2222
+[1492914091.39] Message sent from Node 1111 to Node 3333
+[1492914091.39] Message received at Node 1111 from Node 3333
+
+For node 2222: 
+[1492914091.39] Message received at Node 2222 from Node 4444
+[1492914091.39] Node 2222 Routing Table
+ - (0.7) -> Node 4444; Next Hop -> Node 3333
+ - (0.2) -> Node 3333
+ - (0.1) -> Node 1111
+[1492914091.39] Message sent from Node 2222 to Node 1111
+[1492914091.39] Message sent from Node 2222 to Node 3333
+[1492914091.39] Message sent from Node 2222 to Node 4444
+[1492914091.39] Message received at Node 2222 from Node 1111
+[1492914091.39] Message received at Node 2222 from Node 3333
+[1492914091.39] Message received at Node 2222 from Node 4444
+
+For node 3333:
+[1492914091.39] Message received at Node 3333 from Node 2222
+[1492914091.39] Node 3333 Routing Table
+ - (0.5) -> Node 4444
+ - (0.2) -> Node 2222
+ - (0.3) -> Node 1111; Next Hop -> Node 2222
+[1492914091.39] Message sent from Node 3333 to Node 1111
+[1492914091.39] Message sent from Node 3333 to Node 2222
+[1492914091.39] Message sent from Node 3333 to Node 4444
+[1492914091.39] Message received at Node 3333 from Node 1111
+[1492914091.39] Message received at Node 3333 from Node 4444
+[1492914091.39] Message received at Node 3333 from Node 4444
+
+For node 4444:
+[1492914091.39] Message sent from Node 4444 to Node 2222
+[1492914091.39] Message sent from Node 4444 to Node 3333
+[1492914091.39] Message received at Node 4444 from Node 2222
+[1492914091.39] Node 4444 Routing Table
+ - (0.5) -> Node 3333
+ - (0.7) -> Node 2222; Next Hop -> Node 3333
+ - (0.8) -> Node 1111; Next Hop -> Node 3333
+[1492914091.39] Message sent from Node 4444 to Node 2222
+[1492914091.39] Message sent from Node 4444 to Node 3333
+[1492914091.39] Message received at Node 4444 from Node 3333
+
+----------------------
+cnnode.py
+----------------------
+
+Here, we are merely counting the probe packets received at each node. The scenario we use is the one dictated in the assignment handout for cnnode. This is the output for cnnode.py after a couple of seconds sending the probe packets.
+
+For node 1111:
+[1492959935.55] Message received at Node 1111 from Node 2222
+1492959935.55 Node 1111 Routing Table
+ - (0.9) -> Node 4444; Next Hop -> Node 2222
+ - (1.4) -> Node 3333; Next Hop -> Node 2222
+ - (0.1) -> Node 2222
+[1492959935.57] Message received at Node 1111 from Node 3333
+1492959935.57 Node 1111 Routing Table
+ - (0.8) -> Node 4444; Next Hop -> Node 2222
+ - (0.3) -> Node 3333; Next Hop -> Node 2222
+ - (0.1) -> Node 2222
+[1492959935.57] Message received at Node 1111 from Node 2222
+
+
+For node 2222:
+[1492959935.56] Message received at Node 2222 from Node 3333
+[1492959935.57] Node 2222 Routing Table
+ - (0.7) -> Node 4444; Next Hop -> Node 1111
+ - (0.2) -> Node 3333
+ - (0.1) -> Node 1111
+[1492959935.57] Message sent from Node 2222 to Node 1111
+[1492959935.57] Message sent from Node 2222 to Node 2222
+[1492959935.57] Message received at Node 2222 from Node 4444
+[1492959935.57] Message received at Node 2222 from Node 2222
+[1492959936.55]Link to 1111: 10 sent, 1 lost, loss rate 0.1
+[1492959937.56]Link to 1111: 20 sent, 1 lost, loss rate 0.05
+[1492959938.56]Link to 1111: 30 sent, 2 lost, loss rate 0.0666666666667
+[1492959939.57]Link to 1111: 41 sent, 4 lost, loss rate 0.0975609756098
+[1492959940.59]Link to 1111: 52 sent, 8 lost, loss rate 0.153846153846
+[1492959941.59]Link to 1111: 62 sent, 9 lost, loss rate 0.145161290323
+[1492959942.59]Link to 1111: 72 sent, 10 lost, loss rate 0.138888888889
+
+For node 3333:
+[1492959935.56] Message received at Node 3333 from Node 4444
+[1492959935.56] Node 3333 Routing Table
+ - (0.5) -> Node 4444
+ - (0.2) -> Node 2222
+ - (0.5) -> Node 1111
+[1492959935.56] Message sent from Node 3333 to Node 1111
+[1492959935.56] Message sent from Node 3333 to Node 3333
+[1492959935.56] Message sent from Node 3333 to Node 2222
+[1492959935.56] Message sent from Node 3333 to Node 3333
+[1492959935.56] Message received at Node 3333 from Node 3333
+[1492959935.56] Message received at Node 3333 from Node 3333
+[1492959935.56] Message received at Node 3333 from Node 4444
+[1492959936.57]Link to 2222: 10 sent, 0 lost, loss rate 0.0
+[1492959936.57]Link to 1111: 10 sent, 7 lost, loss rate 0.7
+[1492959937.57]Link to 2222: 21 sent, 4 lost, loss rate 0.190476190476
+[1492959937.57]Link to 1111: 20 sent, 9 lost, loss rate 0.45
+[1492959938.57]Link to 2222: 31 sent, 7 lost, loss rate 0.225806451613
+[1492959938.57]Link to 1111: 31 sent, 16 lost, loss rate 0.516129032258
+[1492959939.57]Link to 2222: 42 sent, 11 lost, loss rate 0.261904761905
+[1492959939.57]Link to 1111: 41 sent, 23 lost, loss rate 0.560975609756
+[1492959940.58]Link to 2222: 52 sent, 14 lost, loss rate 0.269230769231
+[1492959940.58]Link to 1111: 52 sent, 27 lost, loss rate 0.519230769231
+
+For node 4444:
+[1492959935.56] Message sent from Node 4444 to Node 2222
+[1492959935.56] Message sent from Node 4444 to Node 4444
+[1492959935.56] Message sent from Node 4444 to Node 3333
+[1492959935.56] Message sent from Node 4444 to Node 4444
+[1492959935.56] Message received at Node 4444 from Node 4444
+[1492959935.56] Node 4444 Routing Table
+ - (0.5) -> Node 3333
+ - (0.8) -> Node 2222
+[1492959935.56] Message sent from Node 4444 to Node 2222
+[1492959935.56] Message sent from Node 4444 to Node 4444
+[1492959935.56] Message sent from Node 4444 to Node 3333
+[1492959935.56] Message sent from Node 4444 to Node 4444
+[1492959935.56] Message received at Node 4444 from Node 4444
+[1492959935.56] Message received at Node 4444 from Node 4444
+[1492959935.56] Message received at Node 4444 from Node 4444
+[1492959936.57]Link to 3333: 10 sent, 4 lost, loss rate 0.4
+[1492959936.57]Link to 2222: 10 sent, 6 lost, loss rate 0.6
+[1492959937.57]Link to 3333: 21 sent, 8 lost, loss rate 0.380952380952
+[1492959937.57]Link to 2222: 21 sent, 14 lost, loss rate 0.666666666667
+[1492959938.57]Link to 3333: 31 sent, 13 lost, loss rate 0.41935483871
+[1492959938.57]Link to 2222: 31 sent, 22 lost, loss rate 0.709677419355
+[1492959939.58]Link to 3333: 42 sent, 21 lost, loss rate 0.5
+[1492959939.58]Link to 2222: 42 sent, 29 lost, loss rate 0.690476190476
+[1492959940.58]Link to 3333: 52 sent, 26 lost, loss rate 0.5
+[1492959940.58]Link to 2222: 52 sent, 36 lost, loss rate 0.692307692308
+[1492959941.59]Link to 3333: 60 sent, 32 lost, loss rate 0.533333333333
+[1492959941.59]Link to 2222: 63 sent, 45 lost, loss rate 0.714285714286
+
+For cnnode2.py, the operation is pretty much the same, however, my Bellman-Ford algorithm kickstarts every 5 seconds with a new loss rate. For some reason, the table did not re-print. I have no idea why.
+
+For node 1111:
+[1492960247.31] Message received at Node 1111 from Node 2222
+[1492960247.31] Node 1111 Routing Table
+ - (0.0) -> Node 4444; Next Hop -> Node 2222
+ - (0.0) -> Node 3333; Next Hop -> Node 2222
+ - (0.0) -> Node 2222
+[1492960247.32] Message received at Node 1111 from Node 3333
+[1492960252.32] Message received at Node 1111 from Node 2222
+[1492960252.34] Message received at Node 1111 from Node 3333
+[1492960257.33] Message received at Node 1111 from Node 2222
+[1492960257.33] Message received at Node 1111 from Node 3333
+
+For node 2222:
+ Message received at Node 2222 from Node 4444
+[1492960247.3] Node 2222 Routing Table
+ - (0.0) -> Node 4444
+ - (0.0) -> Node 3333; Next Hop -> Node 4444
+ - (0.0) -> Node 1111
+[1492960247.3] Message sent from Node 2222 to Node 1111
+[1492960247.3] Message sent from Node 2222 to Node 2222
+[1492960247.3] Message received at Node 2222 from Node 2222
+[1492960247.33] Message received at Node 2222 from Node 3333
+[1492960247.33] Message received at Node 2222 from Node 4444
+[1492960248.31] Link to 1111: 10 sent, 2 lost, loss rate 0.2
+[1492960249.31] Link to 1111: 21 sent, 2 lost, loss rate 0.0952380952381
+[1492960250.31] Link to 1111: 31 sent, 3 lost, loss rate 0.0967741935484
+[1492960251.32] Link to 1111: 42 sent, 4 lost, loss rate 0.0952380952381
+[1492960252.31] Message sent from Node 2222 to Node 1111
+[1492960252.32] Message received at Node 2222 from Node 2222
+[1492960252.32] Message sent from Node 2222 to Node 2222
+[1492960252.32] Link to 1111: 52 sent, 4 lost, loss rate 0.0769230769231
+[1492960252.33] Message received at Node 2222 from Node 3333
+[1492960252.33] Message received at Node 2222 from Node 4444
+[1492960253.32] Link to 1111: 63 sent, 4 lost, loss rate 0.0634920634921
+[1492960254.33] Link to 1111: 74 sent, 6 lost, loss rate 0.0810810810811
+[1492960255.34] Link to 1111: 84 sent, 6 lost, loss rate 0.0714285714286
+[1492960256.35] Link to 1111: 95 sent, 8 lost, loss rate 0.0842105263158
+[1492960257.32] Message sent from Node 2222 to Node 1111
+[1492960257.32] Message received at Node 2222 from Node 2222
+[1492960257.32] Message sent from Node 2222 to Node 2222
+[1492960257.34] Message received at Node 2222 from Node 3333
+[1492960257.34] Message received at Node 2222 from Node 4444
+[1492960257.35] Link to 1111: 106 sent, 9 lost, loss rate 0.0849056603774
+[1492960258.36] Link to 1111: 116 sent, 9 lost, loss rate 0.0775862068966
+
+For node 3333:
+[1492960247.31] Message received at Node 3333 from Node 4444
+[1492960247.31] Node 3333 Routing Table
+ - (0.0) -> Node 4444; Next Hop -> Node 2222
+ - (0.0) -> Node 2222
+ - (0.0) -> Node 1111
+[1492960247.31] Message sent from Node 3333 to Node 1111
+[1492960247.31] Message sent from Node 3333 to Node 3333
+[1492960247.31] Message sent from Node 3333 to Node 2222
+[1492960247.31] Message sent from Node 3333 to Node 3333
+[1492960247.32] Message received at Node 3333 from Node 3333
+[1492960247.32] Message received at Node 3333 from Node 3333
+[1492960247.32] Message received at Node 3333 from Node 4444
+[1492960248.32] Link to 2222: 10 sent, 2 lost, loss rate 0.2
+[1492960248.32] Link to 1111: 10 sent, 5 lost, loss rate 0.5
+[1492960249.32] Link to 2222: 20 sent, 6 lost, loss rate 0.3
+[1492960249.32] Link to 1111: 21 sent, 9 lost, loss rate 0.428571428571
+[1492960250.32] Link to 2222: 31 sent, 9 lost, loss rate 0.290322580645
+[1492960250.32] Link to 1111: 31 sent, 17 lost, loss rate 0.548387096774
+[1492960251.33] Link to 2222: 42 sent, 13 lost, loss rate 0.309523809524
+[1492960251.33] Link to 1111: 42 sent, 24 lost, loss rate 0.571428571429
+[1492960252.33] Message sent from Node 3333 to Node 1111
+[1492960252.33] Message received at Node 3333 from Node 3333
+[1492960252.33] Message sent from Node 3333 to Node 3333
+[1492960252.33] Message sent from Node 3333 to Node 2222
+[1492960252.33] Message received at Node 3333 from Node 3333
+[1492960252.33] Message sent from Node 3333 to Node 3333
+[1492960252.33] Link to 2222: 52 sent, 13 lost, loss rate 0.25
+[1492960252.33] Link to 1111: 52 sent, 27 lost, loss rate 0.519230769231
+[1492960252.34] Message received at Node 3333 from Node 4444
+[1492960253.33] Link to 2222: 63 sent, 14 lost, loss rate 0.222222222222
+[1492960253.33] Link to 1111: 63 sent, 34 lost, loss rate 0.539682539683
+[1492960254.33] Link to 2222: 73 sent, 14 lost, loss rate 0.191780821918
+[1492960254.33] Link to 1111: 74 sent, 39 lost, loss rate 0.527027027027
+[1492960255.33] Link to 2222: 83 sent, 19 lost, loss rate 0.228915662651
+[1492960255.33] Link to 1111: 84 sent, 48 lost, loss rate 0.571428571429
+[1492960256.34] Link to 2222: 94 sent, 21 lost, loss rate 0.223404255319
+[1492960256.34] Link to 1111: 95 sent, 51 lost, loss rate 0.536842105263
+[1492960257.33] Message sent from Node 3333 to Node 1111
+[1492960257.33] Message received at Node 3333 from Node 3333
+[1492960257.33] Message sent from Node 3333 to Node 3333
+[1492960257.33] Message sent from Node 3333 to Node 2222
+[1492960257.33] Message received at Node 3333 from Node 3333
+[1492960257.33] Message sent from Node 3333 to Node 3333
+[1492960257.34] Message received at Node 3333 from Node 4444
+[1492960257.34] Link to 2222: 105 sent, 22 lost, loss rate 0.209523809524
+[1492960257.34] Link to 1111: 106 sent, 54 lost, loss rate 0.509433962264
+
+For node 4444:
+[1492960247.31] Message sent from Node 4444 to Node 2222
+[1492960247.31] Message sent from Node 4444 to Node 4444
+[1492960247.32] Message sent from Node 4444 to Node 3333
+[1492960247.32] Message sent from Node 4444 to Node 4444
+[1492960247.32] Message received at Node 4444 from Node 4444
+[1492960247.32] Node 4444 Routing Table
+ - (0.0) -> Node 3333
+ - (0.0) -> Node 2222
+[1492960247.32] Message sent from Node 4444 to Node 2222
+[1492960247.32] Message sent from Node 4444 to Node 4444
+[1492960247.32] Message sent from Node 4444 to Node 3333
+[1492960247.32] Message sent from Node 4444 to Node 4444
+[1492960247.32] Message received at Node 4444 from Node 4444
+[1492960247.32] Message received at Node 4444 from Node 4444
+[1492960247.32] Message received at Node 4444 from Node 4444
+[1492960248.32] Link to 3333: 10 sent, 5 lost, loss rate 0.5
+[1492960248.32] Link to 2222: 10 sent, 8 lost, loss rate 0.8
+[1492960249.32] Link to 3333: 21 sent, 10 lost, loss rate 0.47619047619
+[1492960249.32] Link to 2222: 20 sent, 17 lost, loss rate 0.85
+[1492960250.32] Link to 3333: 31 sent, 14 lost, loss rate 0.451612903226
+[1492960250.32] Link to 2222: 31 sent, 25 lost, loss rate 0.806451612903
+[1492960251.32] Link to 3333: 42 sent, 20 lost, loss rate 0.47619047619
+[1492960251.32] Link to 2222: 42 sent, 35 lost, loss rate 0.833333333333
+[1492960252.33] Link to 3333: 53 sent, 28 lost, loss rate 0.528301886792
+[1492960252.33] Link to 2222: 52 sent, 44 lost, loss rate 0.846153846154
+[1492960252.33] Message sent from Node 4444 to Node 2222
+[1492960252.33] Message received at Node 4444 from Node 4444
+[1492960252.33] Message sent from Node 4444 to Node 4444
+[1492960252.33] Message sent from Node 4444 to Node 3333
+[1492960252.33] Message received at Node 4444 from Node 4444
+[1492960252.33] Message sent from Node 4444 to Node 4444
+[1492960253.34] Link to 3333: 63 sent, 32 lost, loss rate 0.507936507937
+[1492960253.34] Link to 2222: 63 sent, 54 lost, loss rate 0.857142857143
+[1492960254.35] Link to 3333: 74 sent, 36 lost, loss rate 0.486486486486
+[1492960254.35] Link to 2222: 73 sent, 62 lost, loss rate 0.849315068493
+[1492960255.36] Link to 3333: 85 sent, 41 lost, loss rate 0.482352941176
+[1492960255.36] Link to 2222: 84 sent, 72 lost, loss rate 0.857142857143
+[1492960256.37] Link to 3333: 95 sent, 50 lost, loss rate 0.526315789474
+[1492960256.37] Link to 2222: 95 sent, 80 lost, loss rate 0.842105263158
+[1492960257.33] Message sent from Node 4444 to Node 2222
+[1492960257.33] Message received at Node 4444 from Node 4444
+[1492960257.33] Message sent from Node 4444 to Node 4444
+[1492960257.33] Message sent from Node 4444 to Node 3333
+[1492960257.33] Message received at Node 4444 from Node 4444
+[1492960257.33] Message sent from Node 4444 to Node 4444
+[1492960257.38] Link to 3333: 106 sent, 53 lost, loss rate 0.5
+[1492960257.38] Link to 2222: 105 sent, 88 lost, loss rate 0.838095238095
+
