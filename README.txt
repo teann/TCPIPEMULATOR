@@ -1,7 +1,3 @@
-PA2 By Tianen Chen
-CSEE 4119 
-04/22/2017
-
 All code written for Python 2.7.6
 ----------------------
 gbnnode.py
